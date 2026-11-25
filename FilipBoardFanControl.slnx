@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FilipBoard.App/FilipBoard.App.csproj" />
+    <Project Path="src/FilipBoard.Core/FilipBoard.Core.csproj" />
+    <Project Path="src/FilipBoard.Data/FilipBoard.Data.csproj" />
+    <Project Path="src/FilipBoard.Hardware/FilipBoard.Hardware.csproj" />
+    <Project Path="src/FilipBoard.Probe/FilipBoard.Probe.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FilipBoard.Tests/FilipBoard.Tests.csproj" />
+  </Folder>
+</Solution>

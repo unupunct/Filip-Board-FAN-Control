@@ -1,0 +1,10 @@
+bin/
+obj/
+dist/
+*.user
+.vs/
+*.db
+*.db-wal
+*.db-shm
+probe-report.json
+TestResults/

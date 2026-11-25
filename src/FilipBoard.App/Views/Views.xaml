@@ -1,0 +1,313 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:FilipBoard.App.ViewModels"
+                    xmlns:c="clr-namespace:FilipBoard.App.Controls">
+
+    <!-- ================= Dashboard ================= -->
+    <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,0,20">
+                <TextBlock Style="{StaticResource H1}" Text="Dashboard"/>
+                <WrapPanel>
+                    <Border Style="{StaticResource Card}"><StackPanel>
+                        <c:Gauge Width="150" Height="150" Minimum="20" Maximum="100" Value="{Binding CpuTemp}" Warn="{Binding CpuWarn}" Crit="{Binding CpuCrit}" DisplayText="{Binding CpuTempText}" Caption="CPU TEMP"/>
+                    </StackPanel></Border>
+                    <Border Style="{StaticResource Card}"><StackPanel>
+                        <c:Gauge Width="150" Height="150" Minimum="20" Maximum="100" Value="{Binding GpuTemp}" Warn="{Binding GpuWarn}" Crit="{Binding GpuCrit}" DisplayText="{Binding GpuTempText}" Caption="GPU TEMP"/>
+                    </StackPanel></Border>
+                    <Border Style="{StaticResource Card}"><StackPanel>
+                        <c:Gauge Width="150" Height="150" Minimum="10" Maximum="80" Value="{Binding BoardTemp}" Warn="{Binding BoardWarn}" Crit="{Binding BoardCrit}" DisplayText="{Binding BoardTempText}" Caption="BOARD TEMP"/>
+                    </StackPanel></Border>
+                    <Border Style="{StaticResource Card}"><StackPanel>
+                        <c:Gauge Width="150" Height="150" Minimum="0" Maximum="100" Value="{Binding CpuLoad}" Warn="85" Crit="98" DisplayText="{Binding CpuLoadText}" Caption="CPU LOAD"/>
+                    </StackPanel></Border>
+                    <Border Style="{StaticResource Card}"><StackPanel>
+                        <c:Gauge Width="150" Height="150" Minimum="0" Maximum="100" Value="{Binding GpuLoad}" Warn="85" Crit="98" DisplayText="{Binding GpuLoadText}" Caption="GPU LOAD"/>
+                    </StackPanel></Border>
+                    <Border Style="{StaticResource Card}" MinWidth="170"><StackPanel VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Muted}" Text="FANS DETECTED"/>
+                        <TextBlock FontSize="34" FontWeight="SemiBold" Text="{Binding TotalFans}"/>
+                        <TextBlock Style="{StaticResource Muted}" Text="ACTIVE PROFILE" Margin="0,10,0,0"/>
+                        <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource Red}" Text="{Binding ProfileName}"/>
+                    </StackPanel></Border>
+                </WrapPanel>
+
+                <TextBlock Style="{StaticResource H2}" Text="Fans" Margin="0,6,0,8"/>
+                <ItemsControl ItemsSource="{Binding Fans}">
+                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate><DataTemplate>
+                        <Border Style="{StaticResource Card}" Width="300" BorderBrush="{Binding LevelBrush}" BorderThickness="0,0,0,3">
+                            <StackPanel>
+                                <TextBlock FontSize="15" FontWeight="SemiBold" Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Style="{StaticResource Muted}" Text="{Binding Header}" Margin="0,2,0,8"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="30" FontWeight="SemiBold" Text="{Binding RpmText}" Foreground="{Binding LevelBrush}"/>
+                                    <TextBlock Text=" RPM" Style="{StaticResource Muted}" VerticalAlignment="Bottom" Margin="0,0,0,6"/>
+                                </StackPanel>
+                                <ProgressBar Value="{Binding RpmBar}" Maximum="100" Margin="0,6,0,8"/>
+                                <TextBlock Text="{Binding PercentText}"/>
+                                <TextBlock Text="{Binding SourceText}" Style="{StaticResource Muted}"/>
+                                <TextBlock Text="{Binding ModeText, StringFormat='Mode: {0}'}" Style="{StaticResource Muted}"/>
+                                <TextBlock Text="{Binding Status}" Style="{StaticResource Muted}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate></ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Style="{StaticResource Muted}" Text="{Binding FanNotice}" Margin="0,0,12,12"/>
+
+                <Border Style="{StaticResource Card}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource H2}" Text="Temperatures (last few minutes)"/>
+                        <c:LineChart Height="200" Series="{Binding Series}" Unit="{Binding Unit}" EmptyText="Waiting for temperature data..."/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+
+    <!-- ================= Fan Control ================= -->
+    <DataTemplate DataType="{x:Type vm:FanControlViewModel}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,12,20">
+                <TextBlock Style="{StaticResource H1}" Text="Fan Control"/>
+                <TextBlock Style="{StaticResource Muted}" Text="{Binding Note}" Margin="0,0,0,12"/>
+                <ItemsControl ItemsSource="{Binding Rows}">
+                    <ItemsControl.ItemTemplate><DataTemplate>
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="1.4*"/></Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,16,0">
+                                    <TextBlock Style="{StaticResource Muted}" Text="Name (click to rename)"/>
+                                    <TextBox Text="{Binding Name, UpdateSourceTrigger=LostFocus}" FontSize="15" Margin="0,2,0,6"/>
+                                    <TextBlock Style="{StaticResource Muted}" Text="{Binding Header}"/>
+                                    <TextBlock FontSize="26" FontWeight="SemiBold" Text="{Binding RpmText}" Margin="0,8,0,0"/>
+                                    <TextBlock Text="{Binding CommandText}" Style="{StaticResource Muted}"/>
+                                    <TextBlock Text="{Binding Status}" Style="{StaticResource Muted}" Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Visibility="{Binding HasChannel, Converter={StaticResource BoolVis}}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Mode" VerticalAlignment="Center" Margin="0,0,10,0" Style="{StaticResource Muted}"/>
+                                        <ComboBox ItemsSource="{Binding Modes}" SelectedItem="{Binding Mode}" Width="160"/>
+                                    </StackPanel>
+                                    <TextBlock Margin="0,10,0,0" Style="{StaticResource Muted}" Text="{Binding ManualPercent, StringFormat='Manual speed: {0:0}%  (used in Manual mode)'}"/>
+                                    <Slider Minimum="0" Maximum="100" Value="{Binding ManualPercent}" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <Button Style="{StaticResource Primary}" Content="Apply" Command="{Binding ApplyCommand}"/>
+                                        <Button Content="Verify control..." Command="{Binding VerifyCommand}" IsEnabled="{Binding Busy, Converter={StaticResource InvertBool}}"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding ApplyMessage}" Style="{StaticResource Muted}" Margin="0,6,0,0"/>
+                                    <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0">
+                                        <TextBlock.Text><MultiBinding StringFormat="{}Control status: {0}">
+                                            <Binding Path="WriteReason"/></MultiBinding></TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding VerifyResult}" TextWrapping="Wrap" Foreground="{StaticResource Cyan}" Margin="0,4,0,0"/>
+                                    <TextBlock Text="Minimum safe speed is enforced; fan stop is disabled by default." Style="{StaticResource Muted}" FontSize="11" Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate></ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+
+    <!-- ================= Fan Curves ================= -->
+    <DataTemplate DataType="{x:Type vm:CurvesViewModel}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,12,20">
+                <TextBlock Style="{StaticResource H1}" Text="Fan Curves"/>
+                <TextBlock Style="{StaticResource Muted}" Margin="0,0,0,10"
+                           Text="Drag points to shape the curve. Double-click empty space to add a point, right-click a point to remove it. The curve axis is always in °C."/>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel>
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Fan / channel"/>
+                            <ComboBox ItemsSource="{Binding Fans}" SelectedItem="{Binding SelectedFan}" DisplayMemberPath="Name" Width="220"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Temperature source"/>
+                            <ComboBox ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}" DisplayMemberPath="Name" Width="300"/></StackPanel>
+                    </WrapPanel>
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Hysteresis (°C)"/><TextBox Width="80" Text="{Binding Hysteresis, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Ramp-up delay (s)"/><TextBox Width="80" Text="{Binding RampUp, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Ramp-down delay (s)"/><TextBox Width="80" Text="{Binding RampDown, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Min safe speed (%)"/><TextBox Width="80" Text="{Binding MinSafe, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Emergency at (°C)"/><TextBox Width="80" Text="{Binding Critical, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                    </WrapPanel>
+                </StackPanel></Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel>
+                    <c:CurveEditor Height="360" Curve="{Binding Curve}" FloorPercent="{Binding MinSafe}" CurrentTemp="{Binding CurrentTemp}" ChangedCommand="{Binding NotifyCurveEditedCommand}"/>
+                    <TextBlock Text="{Binding PreviewText}" Margin="0,8,0,0" Foreground="{StaticResource Cyan}"/>
+                    <TextBlock Text="{Binding Validation}" Foreground="{StaticResource Amber}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Style="{StaticResource Primary}" Content="Save curve" Command="{Binding SaveCommand}"/>
+                        <Button Content="Quiet preset" Command="{Binding PresetCommand}" CommandParameter="Quiet"/>
+                        <Button Content="Balanced preset" Command="{Binding PresetCommand}" CommandParameter="Balanced"/>
+                        <Button Content="Performance preset" Command="{Binding PresetCommand}" CommandParameter="Performance"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding Message}" Style="{StaticResource Muted}" Margin="0,8,0,0"/>
+                </StackPanel></Border>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+
+    <!-- ================= Temperature Monitor ================= -->
+    <DataTemplate DataType="{x:Type vm:TemperatureViewModel}">
+        <Grid Margin="0,0,12,12">
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="240"/></Grid.RowDefinitions>
+            <TextBlock Style="{StaticResource H1}" Text="Temperature Monitor"/>
+            <TextBlock Grid.Row="1" Style="{StaticResource Muted}" Text="{Binding Thresholds}" Margin="0,0,0,10"/>
+            <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,0,0,12">
+                <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected, Mode=TwoWay}" SelectionMode="Single" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Sensor" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Source" Binding="{Binding Hardware}" Width="*"/>
+                        <DataGridTextColumn Header="Now" Binding="{Binding Current}" Width="90"/>
+                        <DataGridTextColumn Header="Min" Binding="{Binding Min}" Width="80"/>
+                        <DataGridTextColumn Header="Max" Binding="{Binding Max}" Width="80"/>
+                        <DataGridTextColumn Header="Avg" Binding="{Binding Avg}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+            <Border Grid.Row="3" Style="{StaticResource Card}" Margin="0">
+                <c:LineChart Series="{Binding Series}" Unit="{Binding Unit}" EmptyText="Select a sensor"/>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <!-- ================= Profiles ================= -->
+    <DataTemplate DataType="{x:Type vm:ProfilesViewModel}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,12,20">
+                <TextBlock Style="{StaticResource H1}" Text="Profiles"/>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="260"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <Border Style="{StaticResource Card}" Margin="0,0,12,0"><ListBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding Selected}" DisplayMemberPath="Name" FontSize="14"/></Border>
+                    <Border Grid.Column="1" Style="{StaticResource Card}" Margin="0"><StackPanel>
+                        <TextBlock Text="{Binding ActiveName, StringFormat='Active profile: {0}'}" Foreground="{StaticResource Red}" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <TextBlock Style="{StaticResource Muted}" Text="Name"/>
+                        <TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,0,10"/>
+                        <WrapPanel>
+                            <Button Style="{StaticResource Primary}" Content="Activate" Command="{Binding ActivateCommand}"/>
+                            <Button Content="Duplicate" Command="{Binding DuplicateCommand}"/>
+                            <Button Content="Rename" Command="{Binding RenameCommand}"/>
+                            <Button Content="Delete" Command="{Binding DeleteCommand}"/>
+                            <Button Content="Export..." Command="{Binding ExportCommand}"/>
+                            <Button Content="Import..." Command="{Binding ImportCommand}"/>
+                        </WrapPanel>
+                        <TextBlock Style="{StaticResource H2}" Text="Automatic selection rule" Margin="0,16,0,6"/>
+                        <WrapPanel>
+                            <ComboBox ItemsSource="{Binding RuleKinds}" SelectedItem="{Binding RuleKind}" Margin="0,0,10,0"/>
+                            <TextBox Width="160" Text="{Binding RuleProcess, UpdateSourceTrigger=PropertyChanged}" ToolTip="Process name, e.g. game (without .exe)" Margin="0,0,10,0"/>
+                            <TextBox Width="70" Text="{Binding RuleThreshold, UpdateSourceTrigger=LostFocus}" ToolTip="Threshold (% load or °C)" Margin="0,0,10,0"/>
+                            <Button Content="Save rule" Command="{Binding SaveRuleCommand}"/>
+                        </WrapPanel>
+                        <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,0"
+                                   Text="Rules: process running, CPU load above %, or GPU temperature above °C. First matching profile wins; otherwise the profile you chose manually is used."/>
+                        <TextBlock Text="{Binding Message}" Foreground="{StaticResource Cyan}" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                    </StackPanel></Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+
+    <!-- ================= History ================= -->
+    <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
+        <Grid Margin="0,0,12,12">
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="240"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <TextBlock Style="{StaticResource H1}" Text="History &amp; Logs"/>
+            <WrapPanel Grid.Row="1" Margin="0,0,0,10">
+                <ComboBox ItemsSource="{Binding Sensors}" SelectedItem="{Binding Sensor}" Width="320" Margin="0,0,10,0"/>
+                <ComboBox ItemsSource="{Binding Ranges}" SelectedItem="{Binding Range}" DisplayMemberPath="Label" Margin="0,0,10,0"/>
+                <Button Content="Refresh" Command="{Binding RefreshCommand}"/>
+                <Button Content="Export history CSV" Command="{Binding ExportHistoryCommand}"/>
+                <Button Content="Export log CSV" Command="{Binding ExportLogCommand}"/>
+                <TextBlock Text="{Binding Info}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+            </WrapPanel>
+            <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,0,0,12"><c:LineChart Series="{Binding Series}" EmptyText="No history for this selection yet"/></Border>
+            <Border Grid.Row="3" Style="{StaticResource Card}" Margin="0">
+                <DataGrid ItemsSource="{Binding Log}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Time (UTC)" Binding="{Binding Utc, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Width="160"/>
+                        <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="70"/>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="130"/>
+                        <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <!-- ================= Hardware Information ================= -->
+    <DataTemplate DataType="{x:Type vm:HardwareViewModel}">
+        <Grid Margin="0,0,12,12">
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+            <TextBlock Style="{StaticResource H1}" Text="Hardware Information"/>
+            <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel>
+                <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding Compat}" Foreground="{StaticResource Amber}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Content="Export diagnostic report..." Command="{Binding ExportReportCommand}"/>
+                    <TextBlock Text="{Binding Message}" Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel></Border>
+            <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0">
+                <DataGrid ItemsSource="{Binding Sensors}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Hardware" Binding="{Binding Hardware}" Width="*"/>
+                        <DataGridTextColumn Header="Sensor" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Kind}" Width="110"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="90"/>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="1.3*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <!-- ================= Settings ================= -->
+    <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,12,20" MaxWidth="760" HorizontalAlignment="Left">
+                <TextBlock Style="{StaticResource H1}" Text="Settings"/>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel>
+                    <TextBlock Style="{StaticResource H2}" Text="Safety"/>
+                    <CheckBox IsChecked="{Binding ReadOnlyMode}" Content="Read-only diagnostic mode (no fan commands are ever sent)"/>
+                    <TextBlock Style="{StaticResource Muted}" Text="Leave on until you have run the hardware verification. Fans stay under BIOS (Smart Fan 5) control."/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel>
+                    <TextBlock Style="{StaticResource H2}" Text="General"/>
+                    <CheckBox IsChecked="{Binding StartWithWindows}" Content="Start with Windows"/>
+                    <CheckBox IsChecked="{Binding MinimizeToTray}" Content="Minimize to system tray"/>
+                    <CheckBox IsChecked="{Binding StartMinimized}" Content="Start minimized"/>
+                    <CheckBox IsChecked="{Binding AutoProfile}" Content="Automatic profile selection (uses profile rules)"/>
+                    <CheckBox IsChecked="{Binding Fahrenheit}" Content="Show temperatures in Fahrenheit"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0"><TextBlock Text="Monitoring refresh (ms)" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <ComboBox ItemsSource="{Binding RefreshOptions}" SelectedItem="{Binding RefreshMs}" Width="100" MinWidth="100"/></StackPanel>
+                    <CheckBox IsChecked="{Binding DemoMode}" Content="Demo mode with SIMULATED data (restart required)" Margin="0,8,0,0"/>
+                </StackPanel></Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel>
+                    <TextBlock Style="{StaticResource H2}" Text="Alert thresholds (°C)"/>
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="CPU warn"/><TextBox Width="70" Text="{Binding CpuWarn, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="CPU critical"/><TextBox Width="70" Text="{Binding CpuCrit, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="GPU warn"/><TextBox Width="70" Text="{Binding GpuWarn, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="GPU critical"/><TextBox Width="70" Text="{Binding GpuCrit, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Board warn"/><TextBox Width="70" Text="{Binding BoardWarn, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Board critical"/><TextBox Width="70" Text="{Binding BoardCrit, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                    </WrapPanel>
+                </StackPanel></Border>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel>
+                    <TextBlock Style="{StaticResource H2}" Text="Logging"/>
+                    <WrapPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Log interval (seconds)"/><TextBox Width="90" Text="{Binding LogInterval, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                        <StackPanel Margin="0,0,16,8"><TextBlock Style="{StaticResource Muted}" Text="Keep history (days)"/><TextBox Width="90" Text="{Binding RetentionDays, UpdateSourceTrigger=LostFocus}"/></StackPanel>
+                    </WrapPanel>
+                    <WrapPanel Margin="0,6,0,0">
+                        <Button Content="Open data folder" Command="{Binding OpenDataFolderCommand}"/>
+                        <Button Style="{StaticResource Danger}" Content="Restore defaults..." Command="{Binding RestoreDefaultsCommand}"/>
+                    </WrapPanel>
+                </StackPanel></Border>
+                <TextBlock Text="{Binding Message}" Foreground="{StaticResource Cyan}" TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DataTemplate>
+</ResourceDictionary>
