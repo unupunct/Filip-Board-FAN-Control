@@ -2,7 +2,7 @@
 
 A Windows desktop app for monitoring temperatures and fan speeds and, **where the hardware proves it can be controlled**, setting fan curves. Built for a **Gigabyte Z370 AORUS Gaming 7 (Rev 1.0)** with three ARCTIC P14 case fans, on Windows 10/11.
 
-> **Status: v1.0.0, not yet verified on the target board.** It was developed on a different PC. The Gigabyte Z370's Super I/O chip and fan channels are *not confirmed*. Fan control is **off by default** and only ever applies to channels that pass an on-board write/readback test. See [Hardware compatibility](docs/HARDWARE_COMPATIBILITY.md).
+> **Status: v1.0.1. Sensors and fan RPM read correctly on the target Gigabyte Z370 (two ITE chips, 8 channels); fan control is still unverified there.** Fan control is **off by default** and only ever applies to channels that pass an on-board write/readback test. See [Hardware compatibility](docs/HARDWARE_COMPATIBILITY.md).
 
 ![Dashboard (demo mode, simulated data)](docs/screenshots/dashboard.png)
 
@@ -36,7 +36,7 @@ Limitation: if the process is force-killed, firmware control cannot be restored 
 
 ## Install
 
-Download `FilipBoardFanControl-Setup-1.0.0.exe` from [Releases](https://github.com/unupunct/Filip-Board-FAN-Control/releases) and run it. See [docs/INSTALL.md](docs/INSTALL.md).
+Download `FilipBoardFanControl-Setup-1.0.1.exe` from [Releases](https://github.com/unupunct/Filip-Board-FAN-Control/releases) and run it. See [docs/INSTALL.md](docs/INSTALL.md).
 Run the app **as Administrator** for motherboard sensors and fans (the app offers a *Restart as Administrator* button).
 
 ## Build from source

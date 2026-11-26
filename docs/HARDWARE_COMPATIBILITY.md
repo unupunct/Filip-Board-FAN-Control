@@ -31,3 +31,11 @@ v1.0.0 was developed on an HP PC (i7-6700, RTX 4060), **not** the Gigabyte Z370 
 - [ ] Channel mapping (header to RPM sensor) correct
 - [ ] Recovery to BIOS control after exit
 - [ ] Behaviour when a sensor disappears
+
+## Confirmed on a real Gigabyte Z370 AORUS Gaming 7 (v1.0.1)
+
+- Super I/O chips detected by LibreHardwareMonitor: **ITE IT8686E** (5 fan channels) and **ITE IT8791E/IT8792E/IT8795E** (3 fan channels). Fan RPM and temperatures read correctly while running as Administrator.
+- By matching RPM against the BIOS (Smart Fan 5), these channels are *probably*: IT8686E Fan #1 = CPU_OPT, IT8686E Fan #2 = SYS_FAN1, IT8792E Fan #3 = SYS_FAN4. The app labels them that way on this board; a name you set always wins.
+- IT8686E exposes no readable duty cycle (shown as n/a). Reported percentages on the IT8792E did not match the BIOS curves and are not used for mapping.
+- Headers that read 0 RPM in the BIOS (CPU_FAN, SYS_FAN2, SYS_FAN3 in the tested setup) also read 0 in the app; SYS_FAN2 is off below 90 C by its BIOS curve.
+- **Fan control (write) is still unverified** on this board. A draft profile "BIOS replica (draft)" is created, but nothing is written until a channel passes the on-board verification.

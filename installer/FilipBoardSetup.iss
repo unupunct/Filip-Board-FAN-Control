@@ -1,6 +1,6 @@
 ; Inno Setup script for Filip Board FAN Control
 #define AppName "Filip Board FAN Control"
-#define AppVersion "1.0.0"
+#define AppVersion "1.0.1"
 #define AppExe "FilipBoardFanControl.exe"
 
 [Setup]

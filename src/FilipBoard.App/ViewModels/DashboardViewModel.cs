@@ -96,7 +96,7 @@ public sealed partial class DashboardViewModel : PageViewModel
             var card = Fans.FirstOrDefault(f => f.Key == key);
             if (card is null) Fans.Add(card = new FanCardViewModel { Key = key });
             card.Name = c.Name;
-            card.Header = c.Channel.Id.Length > 0 ? $"Header: {c.Channel.Name}" : "Header: (monitor only)";
+            card.Header = c.Channel.Id.Length > 0 ? $"Channel: {Services.FanControlService.QualifiedName(c.Channel.Id, c.Channel.Name)}" : "Header: (monitor only)";
             card.RpmText = c.Rpm is { } r ? $"{r:0}" : "--";
             card.RpmBar = Math.Min(100, (c.Rpm ?? 0) / 20.0);
             card.PercentText = c.CommandedPercent is { } cp ? $"{cp:0}% (commanded)" : c.ReportedPercent is { } rp ? $"{rp:0}% (reported)" : "n/a";

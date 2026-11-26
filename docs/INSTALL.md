@@ -5,7 +5,7 @@
 - Administrator rights for motherboard sensors and fan control.
 
 ## Installer
-1. Download `FilipBoardFanControl-Setup-1.0.0.exe` from the Releases page.
+1. Download `FilipBoardFanControl-Setup-1.0.1.exe` from the Releases page.
 2. Run it and accept the UAC prompt. Windows SmartScreen may warn because the installer is not code-signed; choose *More info → Run anyway* only if you trust the source.
 3. Start **Filip Board FAN Control** from the Start menu.
 4. If the banner says *Limited access*, click **Restart as Administrator**.

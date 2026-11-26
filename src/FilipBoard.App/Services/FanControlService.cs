@@ -48,6 +48,11 @@ public sealed class FanControlService : IDisposable
         Provider = provider; Backend = backend; _store = store; Settings = settings;
         Gate = new WriteGate(store.LoadVerifications()) { ReadOnlyMode = settings.ReadOnlyMode };
         Profiles = store.LoadProfiles();
+        if (provider.Summary.Fingerprint == BoardPresets.Fingerprint && Profiles.All(p => p.Name != BoardPresets.ProfileName))
+        {
+            store.SaveProfile(BoardPresets.BiosReplica());
+            Profiles = store.LoadProfiles();
+        }
         ActiveProfile = Profiles.FirstOrDefault(p => p.Name == settings.ActiveProfile) ?? Profiles[1];
     }
 
@@ -259,7 +264,15 @@ public sealed class FanControlService : IDisposable
     }
 
     public string DisplayName(string idOrChannel, string fallback) =>
-        Settings.ChannelNames.TryGetValue(idOrChannel, out var n) && !string.IsNullOrWhiteSpace(n) ? n : fallback;
+        Settings.ChannelNames.TryGetValue(idOrChannel, out var n) && !string.IsNullOrWhiteSpace(n) ? n
+        : BoardPresets.LabelFor(Provider.Summary.Fingerprint, idOrChannel) ?? QualifiedName(idOrChannel, fallback);
+
+    /// <summary>"/lpc/it8686e/0/control/2" + "Fan #3" -> "IT8686E Fan #3", so two Super I/O chips never show identical names.</summary>
+    public static string QualifiedName(string id, string name)
+    {
+        var parts = id.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length >= 2 && parts[0] == "lpc" ? $"{parts[1].ToUpperInvariant()} {name}" : name;
+    }
 
     private void CheckAlerts(IReadOnlyList<SensorReading> readings, DateTime now)
     {

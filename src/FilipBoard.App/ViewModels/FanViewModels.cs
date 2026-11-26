@@ -39,7 +39,7 @@ public sealed partial class FanRowViewModel : ObservableObject
     public void Update(ChannelState c)
     {
         Channel = c.Channel;
-        Header = HasChannel ? $"Header/channel: {c.Channel.Name}" : "Monitor only - the motherboard exposes no control channel for this header";
+        Header = HasChannel ? $"Chip channel: {Services.FanControlService.QualifiedName(c.Channel.Id, c.Channel.Name)} (rename it to your header, e.g. SYS_FAN1)" : "Monitor only - the motherboard exposes no control channel for this header";
         RpmText = c.Rpm is { } r ? $"{r:0} RPM" : "no RPM signal";
         CommandText = c.CommandedPercent is { } p ? $"Requested {p:0}%" : "Requested: hardware control";
         Status = c.Status; WriteAllowed = c.WriteAllowed; Verified = c.Verified; WriteReason = c.WriteReason;

@@ -8,3 +8,4 @@ dist/
 *.db-shm
 probe-report.json
 TestResults/
+filipboard-diagnostic-*.json
